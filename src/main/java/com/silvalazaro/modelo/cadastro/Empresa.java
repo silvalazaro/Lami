@@ -2,14 +2,20 @@ package com.silvalazaro.modelo.cadastro;
 
 
 
-import com.silvalazaro.modelo.Modelo;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Representa uma empresa - Pessoa Jurídica
  * 
  * @author Lazaro Silva
  */
-public class Empresa extends Modelo{
+@Entity
+@Table(name = "c_empresa")
+public class Empresa extends PessoaJuridica{
+    @Id
+    private int id;
     private String razao;
     private String fantasia;
     private String email;

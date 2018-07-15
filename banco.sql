@@ -3,8 +3,10 @@
 CREATE DATABASE IF NOT EXISTS `lami`;
 USE `lami`;
 #destroy tabelas
+DROP TABLE IF EXISTS `c_endereco`;
+DROP TABLE IF EXISTS `c_fornecedor`;
 DROP TABLE IF EXISTS `c_pessoa_fisica`;
-DROP TABLE IF EXISTS `c_entidade`;
+DROP TABLE IF EXISTS `c_pessoa_juridica`;
 DROP TABLE IF EXISTS `c_localidade`;
 DROP TABLE IF EXISTS `c_cidade`;
 DROP TABLE IF EXISTS `c_uf`;
@@ -40,45 +42,37 @@ CREATE TABLE IF NOT EXISTS `c_localidade`(
 	REFERENCES `c_cidade` (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `c_entidade`(
+CREATE TABLE IF NOT EXISTS `c_pessoa_juridica`(
  `id` INT NOT NULL AUTO_INCREMENT,
- `cep` CHAR(8) NOT NULL,
- `logradouro` VARCHAR(200) NOT NULL,
- `complemento` VARCHAR(100) NULL,
- `bairro` VARCHAR(50) NOT NULL,
- `numero` VARCHAR(4) NULL,
+ `cnpj` CHAR(14) NOT NULL,
+ `razao` VARCHAR(150) NOT NULL,
+ `fantasia` VARCHAR(150) NULL,
+ `email` VARCHAR(50) NOT NULL,
+ `ie` VARCHAR(20) NULL,
+ `cnae` VARCHAR(10) NULL,
   PRIMARY KEY(`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `c_pessoa_fisica`(
- `id` INT NOT NULL,
- `nome` VARCHAR(200) NULL,
+ `id` INT NOT NULL AUTO_INCREMENT,
  `cpf` CHAR(11) NOT NULL,
+ `nome` VARCHAR(200) NULL,
  `email` VARCHAR(200) NULL,
  `telefone` VARCHAR(13) NULL,
  PRIMARY KEY(`id`),
- UNIQUE INDEX (`cpf` ASC),
- CONSTRAINT `C_PessoaFisicaIdx`
-	FOREIGN KEY (`id`)
-    REFERENCES `c_entidade` (`id`)
+ UNIQUE INDEX (`cpf` ASC)
 );
 
-CREATE TABLE IF NOT EXISTS `c_pessoa_juridica`(
+CREATE TABLE IF NOT EXISTS `c_endereco`(
  `id` INT NOT NULL,
- `razao` VARCHAR(200) NULL,
- `fantasia` VARCHAR(200) NULL,
- `cnpj` CHAR(14) NOT NULL,
+ `cpf` CHAR(11) NOT NULL,
+ `nome` VARCHAR(200) NULL,
  `email` VARCHAR(200) NULL,
- `ie` VARCHAR(10) NULL,
- `im` VARCHAR(10) NULL,
- `cnae` VARCHAR(10) NULL,
- `contribuinte` TINYINT NULL,
- PRIMARY KEY (`id`),
- UNIQUE INDEX (`cnpj` ASC),
- CONSTRAINT `C_PessoaJuridicaIdx`
-	FOREIGN KEY (`id`)
-    REFERENCES `c_entidade` (`id`)
+ `telefone` VARCHAR(13) NULL,
+ PRIMARY KEY(`id`),
+ UNIQUE INDEX (`cpf` ASC)
 );
+
 CREATE TABLE IF NOT EXISTS `c_fornecedor`(
  `id` INT NOT NULL,
  PRIMARY KEY(`id`),
