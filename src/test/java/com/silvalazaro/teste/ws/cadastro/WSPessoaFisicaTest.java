@@ -1,8 +1,7 @@
 package com.silvalazaro.teste.ws.cadastro;
 
 import com.silvalazaro.modelo.cadastro.PessoaFisica;
-import com.silvalazaro.ws.cadastro.WSPessoaFisica;
-import com.silvalazaro.ws.Facade;
+import com.silvalazaro.teste.ServidorTest;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -14,23 +13,28 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Classe de teste do recurso PessoaFisica
  *
  * @author Lázaro Silva
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WSPessoaFisicaTest {
 
-    Facade ws;
-    Client client;
+    static Client client = ClientBuilder.newClient();
+    static WebTarget destino;
 
     public WSPessoaFisicaTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
+        // limpar tabela
+
     }
 
     @AfterClass
@@ -39,7 +43,6 @@ public class WSPessoaFisicaTest {
 
     @Before
     public void setUp() {
-        ws = new WSPessoaFisica();
         client = ClientBuilder.newClient();
     }
 
@@ -48,16 +51,22 @@ public class WSPessoaFisicaTest {
     }
 
     @Test
-    public void testCadastroValidoPessoaFisica() {
+    public void test01LimpaCadastroPessoaFisica() {
+        destino = client.target(ServidorTest.PATH + "pessoaFisica");
+        Response resp = destino.request().delete();
+        TestCase.assertEquals(200, resp.getStatus());
+    }
+
+    @Test
+    public void test02CadastroValidoPessoaFisica() {
         PessoaFisica pf = new PessoaFisica();
         pf.setCpf("64974795031");
         pf.setEmail("teste@teste.com");
         pf.setNome("Joao Sousa Silva");
         pf.setTelefone("82988881234");
-
-        WebTarget target = client.target("http://localhost/ws/pessoaFisica");
+        WebTarget target = client.target("http://localhost:8081/ws/pessoaFisica");
         try (Response resp = target.request().post(Entity.entity(pf, MediaType.APPLICATION_JSON))) {
-            TestCase.assertEquals("POST ws/pessoasFisicas", Response.Status.CREATED, resp.getStatus());
+            TestCase.assertEquals("POST ws/pessoasFisicas", 201, resp.getStatus());
         }
     }
 }

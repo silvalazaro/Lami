@@ -4,6 +4,10 @@ import com.silvalazaro.modelo.Modelo;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.Root;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -26,25 +30,25 @@ import javax.ws.rs.core.Response;
 public class Facade<T extends Modelo> {
 
     protected Class<T> classe;
-    private final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("Lami");
+    private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("Lami");
+    private EntityManager EM;
 
     public Facade(Class<T> classe) {
-        classe = classe;
+        this.classe = classe;
     }
 
     /**
      * Salvar uma entidade
      *
-     * @param <T> Tipo que extenda Modelo
      * @param modelo Objeto que extenda Modelo
      * @return Response
      */
     public T salvar(T modelo) {
-        EntityManager EM = EMF.createEntityManager();
+        
         System.out.println("teste salvando");
-        EM.getTransaction().begin();
-        EM.persist(modelo);
-        EM.getTransaction().commit();
+        this.EMG().getTransaction().begin();
+        this.EMG().persist(modelo);
+        this.EMG().getTransaction().commit();
         return modelo;
     }
 
@@ -56,7 +60,7 @@ public class Facade<T extends Modelo> {
 
     @POST
     public Response criar(T modelo) {
-        //modelo = salvar(modelo);
+        modelo = salvar(modelo);
         return Response.status(Response.Status.CREATED).entity(modelo).build();
     }
 
@@ -66,6 +70,17 @@ public class Facade<T extends Modelo> {
         return Response.ok().build();
     }
 
+    @DELETE
+    public Response remover() {
+        CriteriaBuilder cb = this.EMG().getCriteriaBuilder();
+        CriteriaDelete<T> del = cb.createCriteriaDelete(classe);
+        Root<T> root = del.from(classe);
+        del.where();
+        Query query = this.EMG().createQuery(del);
+        query.executeUpdate();
+        return Response.ok().build();
+    }
+    
     @GET
     @Path("/")
     public Response listar() {
@@ -76,6 +91,12 @@ public class Facade<T extends Modelo> {
     @Path("")
     public Response atualizar() {
         return Response.ok().build();
+    }
+    private EntityManager EMG(){
+        if(EM == null){
+            EM = EMF.createEntityManager();
+        }
+        return EM;
     }
 
 }
