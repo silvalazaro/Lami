@@ -58,15 +58,18 @@ public class WSPessoaFisicaTest {
     }
 
     @Test
-    public void test02CadastroValidoPessoaFisica() {
-        PessoaFisica pf = new PessoaFisica();
-        pf.setCpf("64974795031");
-        pf.setEmail("teste@teste.com");
-        pf.setNome("Joao Sousa Silva");
-        pf.setTelefone("82988881234");
+    public void test02CRUDPessoaFisica() {
+        PessoaFisica pf1 = new PessoaFisica();
+        pf1.setCpf("64974795031");
+        pf1.setEmail("teste@teste.com");
+        pf1.setNome("Joao Sousa Silva");
+        pf1.setTelefone("82988881234");
         WebTarget target = client.target("http://localhost:8081/ws/pessoaFisica");
-        try (Response resp = target.request().post(Entity.entity(pf, MediaType.APPLICATION_JSON))) {
+        // cadastro
+        try (Response resp = target.request().post(Entity.entity(pf1, MediaType.APPLICATION_JSON))) {
             TestCase.assertEquals("POST ws/pessoasFisicas", 201, resp.getStatus());
         }
+        target = client.target(ServidorTest.PATH + "pessoaFisica/1");
     }
+    
 }

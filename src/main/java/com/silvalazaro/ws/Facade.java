@@ -44,11 +44,11 @@ public class Facade<T extends Modelo> {
      * @return Response
      */
     public T salvar(T modelo) {
-        
-        System.out.println("teste salvando");
-        this.EMG().getTransaction().begin();
-        this.EMG().persist(modelo);
-        this.EMG().getTransaction().commit();
+
+        EntityManager EMG = EMF.createEntityManager();
+        EMG.getTransaction().begin();
+        EMG.persist(modelo);
+        EMG.getTransaction().commit();
         return modelo;
     }
 
@@ -72,15 +72,18 @@ public class Facade<T extends Modelo> {
 
     @DELETE
     public Response remover() {
-        CriteriaBuilder cb = this.EMG().getCriteriaBuilder();
-        CriteriaDelete<T> del = cb.createCriteriaDelete(classe);
-        Root<T> root = del.from(classe);
-        del.where();
-        Query query = this.EMG().createQuery(del);
+
+        EntityManager EMG = EMF.createEntityManager();
+        EMG.getTransaction().begin();
+        CriteriaBuilder cb = EMG.getCriteriaBuilder();
+        CriteriaDelete del = cb.createCriteriaDelete(classe);
+        Root root = del.from(classe);
+        Query query = EMG.createQuery(del);
         query.executeUpdate();
+        EMG.getTransaction().commit();
         return Response.ok().build();
     }
-    
+
     @GET
     @Path("/")
     public Response listar() {
@@ -91,12 +94,6 @@ public class Facade<T extends Modelo> {
     @Path("")
     public Response atualizar() {
         return Response.ok().build();
-    }
-    private EntityManager EMG(){
-        if(EM == null){
-            EM = EMF.createEntityManager();
-        }
-        return EM;
     }
 
 }
