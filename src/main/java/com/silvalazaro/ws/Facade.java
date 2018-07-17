@@ -31,10 +31,11 @@ public class Facade<T extends Modelo> {
 
     protected Class<T> classe;
     private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("Lami");
-    private EntityManager EM;
+    private EntityManager EMG;
 
     public Facade(Class<T> classe) {
         this.classe = classe;
+        EMG = EMF.createEntityManager();
     }
 
     /**
@@ -67,13 +68,18 @@ public class Facade<T extends Modelo> {
     @DELETE
     @Path("{id}")
     public Response remover(@PathParam("id") String id) {
+        EMG.getTransaction().begin();
+        CriteriaBuilder cb = EMG.getCriteriaBuilder();
+        CriteriaDelete del = cb.createCriteriaDelete(classe);
+        Root root = del.from(classe);
+        del.where(cb.equal(root.get("id"), id));
+        EMG.createQuery(del).executeUpdate();
+        EMG.getTransaction().commit();
         return Response.ok().build();
     }
 
     @DELETE
     public Response remover() {
-
-        EntityManager EMG = EMF.createEntityManager();
         EMG.getTransaction().begin();
         CriteriaBuilder cb = EMG.getCriteriaBuilder();
         CriteriaDelete del = cb.createCriteriaDelete(classe);

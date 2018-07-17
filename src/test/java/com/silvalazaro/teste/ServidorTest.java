@@ -2,7 +2,6 @@ package com.silvalazaro.teste;
 
 import com.silvalazaro.teste.ws.cadastro.WSPessoaFisicaTest;
 import com.silvalazaro.ws.WS;
-import com.silvalazaro.ws.cadastro.WSPessoaFisica;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
@@ -35,7 +34,6 @@ public class ServidorTest {
         HttpContextBuilder contextBuilder = new HttpContextBuilder();
         contextBuilder.getDeployment().setApplication(new WS());
         contextBuilder.setPath("ws");
-        contextBuilder.getDeployment().getActualResourceClasses().add(WSPessoaFisica.class);
         HttpContext context = contextBuilder.bind(servidor);
         //context.getAttributes().put("some.config.info", "42");
         servidor.start();
