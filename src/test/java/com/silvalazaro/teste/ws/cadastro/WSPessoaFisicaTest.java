@@ -9,6 +9,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import junit.framework.TestCase;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,7 +26,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WSPessoaFisicaTest {
 
-    static Client client = ClientBuilder.newClient();
+    static Client client = ResteasyClientBuilder.newBuilder().build();
     static WebTarget destino;
 
     public WSPessoaFisicaTest() {
@@ -96,16 +97,37 @@ public class WSPessoaFisicaTest {
     public void test04Busca() {
         Response resp = null;
         PessoaFisica pf1 = null;
-        
+
         destino = client.target(ServidorTest.PATH + "pessoaFisica/2");
+        destino.request().accept(MediaType.APPLICATION_JSON);
         resp = destino.request().get();
         TestCase.assertEquals("01", 200, resp.getStatus());
-        pf1 = (PessoaFisica) resp.getEntity();
+        pf1 = resp.readEntity(PessoaFisica.class);
         TestCase.assertEquals("02", 2, pf1.getId());
     }
-    
+
     @Test
     public void test04Atualiza() {
+        Response resp = null;
+        PessoaFisica pf1 = null;
+        // busca cadastro
+        destino = client.target(ServidorTest.PATH + "pessoaFisica/2");
+        destino.request().accept(MediaType.APPLICATION_JSON);
+        resp = destino.request().get();
+        TestCase.assertEquals("01", 200, resp.getStatus());
+        // atualiza
+        pf1 = resp.readEntity(PessoaFisica.class);
+        pf1.setNome("Jose");
+        pf1.setEmail(null);
+        destino = client.target(ServidorTest.PATH + "pessoaFisica");
+        destino.request().accept(MediaType.APPLICATION_JSON);
+        resp = destino.request().put(Entity.entity(pf1, MediaType.APPLICATION_JSON));
+        TestCase.assertEquals("02", 200, resp.getStatus());
+        
+        pf1 = resp.readEntity(PessoaFisica.class);
+        TestCase.assertEquals("03", "Jose", pf1.getNome());
+        
+
     }
 
 }

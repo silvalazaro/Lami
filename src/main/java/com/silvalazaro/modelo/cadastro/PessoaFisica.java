@@ -4,6 +4,7 @@ import com.silvalazaro.modelo.Modelo;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Representa o cadastro de uma Pessoa Física
@@ -12,6 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "c_pessoa_fisica")
+@XmlRootElement
 public class PessoaFisica extends Modelo {
     
     @Id

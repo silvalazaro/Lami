@@ -1,12 +1,15 @@
 package com.silvalazaro.ws;
 
 import com.silvalazaro.modelo.Modelo;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -31,11 +34,11 @@ public class Facade<T extends Modelo> {
 
     protected Class<T> classe;
     private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("Lami");
-    private EntityManager EMG;
+    private EntityManager EM;
 
     public Facade(Class<T> classe) {
         this.classe = classe;
-        EMG = EMF.createEntityManager();
+        EM = EMF.createEntityManager();
     }
 
     /**
@@ -46,17 +49,23 @@ public class Facade<T extends Modelo> {
      */
     public T salvar(T modelo) {
 
-        EntityManager EMG = EMF.createEntityManager();
-        EMG.getTransaction().begin();
-        EMG.persist(modelo);
-        EMG.getTransaction().commit();
+        EntityManager EM = EMF.createEntityManager();
+        EM.getTransaction().begin();
+        EM.persist(modelo);
+        EM.getTransaction().commit();
         return modelo;
     }
 
     @GET
     @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response selecionar(@PathParam("id") String id) {
-        return Response.ok().build();
+        CriteriaBuilder cb = EM.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(classe);
+        Root root = query.from(classe);
+        query.where(cb.equal(root.get("id"), id));
+        T modelo = (T) EM.createQuery(query).getSingleResult();
+        return Response.ok().entity(modelo).build();
     }
 
     @POST
@@ -68,25 +77,25 @@ public class Facade<T extends Modelo> {
     @DELETE
     @Path("{id}")
     public Response remover(@PathParam("id") String id) {
-        EMG.getTransaction().begin();
-        CriteriaBuilder cb = EMG.getCriteriaBuilder();
+        EM.getTransaction().begin();
+        CriteriaBuilder cb = EM.getCriteriaBuilder();
         CriteriaDelete del = cb.createCriteriaDelete(classe);
         Root root = del.from(classe);
         del.where(cb.equal(root.get("id"), id));
-        EMG.createQuery(del).executeUpdate();
-        EMG.getTransaction().commit();
+        EM.createQuery(del).executeUpdate();
+        EM.getTransaction().commit();
         return Response.ok().build();
     }
 
     @DELETE
     public Response remover() {
-        EMG.getTransaction().begin();
-        CriteriaBuilder cb = EMG.getCriteriaBuilder();
+        EM.getTransaction().begin();
+        CriteriaBuilder cb = EM.getCriteriaBuilder();
         CriteriaDelete del = cb.createCriteriaDelete(classe);
         Root root = del.from(classe);
-        Query query = EMG.createQuery(del);
+        Query query = EM.createQuery(del);
         query.executeUpdate();
-        EMG.getTransaction().commit();
+        EM.getTransaction().commit();
         return Response.ok().build();
     }
 
@@ -97,7 +106,6 @@ public class Facade<T extends Modelo> {
     }
 
     @PUT
-    @Path("")
     public Response atualizar() {
         return Response.ok().build();
     }
