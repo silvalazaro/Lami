@@ -1,8 +1,8 @@
 package com.silvalazaro.ws;
 
 import com.silvalazaro.modelo.Modelo;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.silvalazaro.modelo.busca.Busca;
+import com.silvalazaro.modelo.busca.Filtro;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -42,7 +42,7 @@ public class Facade<T extends Modelo> {
     }
 
     /**
-     * Salvar uma entidade
+     * Persiste um objeto no banco de dados
      *
      * @param modelo Objeto que extenda Modelo
      * @return Response
@@ -56,6 +56,12 @@ public class Facade<T extends Modelo> {
         return modelo;
     }
 
+    /**
+     * Busca um objeto pela sua chave primaria
+     *
+     * @param id Chave primária do objeto
+     * @return
+     */
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,6 +80,12 @@ public class Facade<T extends Modelo> {
         return Response.status(Response.Status.CREATED).entity(modelo).build();
     }
 
+    /**
+     * Remove um objeto do banco de dados
+     *
+     * @param id Chave primária do objeto
+     * @return
+     */
     @DELETE
     @Path("{id}")
     public Response remover(@PathParam("id") String id) {
@@ -87,6 +99,11 @@ public class Facade<T extends Modelo> {
         return Response.ok().build();
     }
 
+    /**
+     * Remove todos os objetos
+     *
+     * @return
+     */
     @DELETE
     public Response remover() {
         EM.getTransaction().begin();
@@ -99,9 +116,28 @@ public class Facade<T extends Modelo> {
         return Response.ok().build();
     }
 
+    /**
+     * Busca objetos
+     *
+     * @param busca Objeto que contem os parametros da busca
+     * @return
+     * @throws com.silvalazaro.ws.Excecao
+     */
     @GET
     @Path("/")
-    public Response listar() {
+    public Response buscar(Busca busca) throws Excecao {
+        CriteriaBuilder cb = EM.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(classe);
+        Root root = query.from(classe);
+
+        for (Filtro filtro : busca.getE()) {
+            switch (filtro.getComparacao()) {
+                case "=":
+                    break;
+                default:
+                    throw new Excecao();
+            }
+        }
         return Response.ok().build();
     }
 

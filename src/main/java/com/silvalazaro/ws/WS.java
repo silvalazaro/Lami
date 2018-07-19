@@ -20,7 +20,7 @@ public class WS extends Application {
     public WS() {
         singletons.add(new WSEmpresa());
         singletons.add(new WSPessoaFisica());
-        singletons.add(new Excecao());
+        singletons.add(new ExcecaoMapper());
     }
 
     @Override
