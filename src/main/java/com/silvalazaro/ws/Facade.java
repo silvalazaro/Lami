@@ -3,6 +3,7 @@ package com.silvalazaro.ws;
 import com.silvalazaro.modelo.Modelo;
 import com.silvalazaro.modelo.busca.Busca;
 import com.silvalazaro.modelo.busca.Filtro;
+import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -10,6 +11,8 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -30,7 +33,7 @@ import javax.ws.rs.core.Response;
  */
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class Facade<T extends Modelo> {
+public abstract class Facade<T extends Modelo> {
 
     protected Class<T> classe;
     private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("Lami");
@@ -100,7 +103,7 @@ public class Facade<T extends Modelo> {
     }
 
     /**
-     * Remove todos os objetos
+     * Método que remove todos os objetos
      *
      * @return
      */
@@ -117,28 +120,40 @@ public class Facade<T extends Modelo> {
     }
 
     /**
-     * Busca objetos
+     * Método que realiza busca de objetos
      *
      * @param busca Objeto que contem os parametros da busca
      * @return
      * @throws com.silvalazaro.ws.Excecao
      */
-    @GET
-    @Path("/")
+    @POST
+    @Path("busca")
     public Response buscar(Busca busca) throws Excecao {
         CriteriaBuilder cb = EM.getCriteriaBuilder();
         CriteriaQuery query = cb.createQuery(classe);
         Root root = query.from(classe);
-
+        ArrayList<Predicate> predicatesE = new ArrayList<>();
+        ArrayList<Predicate> predicatesOu = new ArrayList<>();
         for (Filtro filtro : busca.getE()) {
-            switch (filtro.getComparacao()) {
-                case "=":
-                    break;
-                default:
-                    throw new Excecao();
-            }
+            predicatesE.add(filtro(filtro, cb, root));
         }
+        for (Filtro filtro : busca.getOu()) {
+            predicatesOu.add(filtro(filtro, cb, root));
+        }
+        ArrayList<Predicate> predicates = new ArrayList<>();
         return Response.ok().build();
+    }
+
+    private Predicate filtro(Filtro filtro, CriteriaBuilder cb, Root root) throws Excecao {
+        Predicate predicate = null;
+        switch (filtro.getOperador()) {
+            case "%":
+                predicate = cb.like(root.get(filtro.getPropriedade()), filtro.getValor());
+                break;
+            default:
+                throw new Excecao(Response.Status.BAD_REQUEST, "Operador condicional inválido");
+        }
+        return predicate;
     }
 
     @PUT

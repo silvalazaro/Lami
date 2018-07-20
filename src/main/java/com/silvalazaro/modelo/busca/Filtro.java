@@ -11,6 +11,16 @@ public class Filtro {
     private String valor;
     private String operador;
 
+    public Filtro(){
+        
+    }
+    
+    public Filtro(String propriedade, String operador, String valor){
+        this.propriedade = propriedade; 
+        this.operador = operador;
+        this.valor = valor;
+    }
+    
     public String getPropriedade() {
         return propriedade;
     }
@@ -27,11 +37,11 @@ public class Filtro {
         this.valor = valor;
     }
 
-    public String getComparacao() {
+    public String getOperador() {
         return operador;
     }
 
-    public void setComparacao(String comparacao) {
+    public void setOperador(String comparacao) {
         this.operador = comparacao;
     }
 

@@ -1,6 +1,7 @@
 package com.silvalazaro.ws;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 /**
  *
@@ -8,11 +9,14 @@ import javax.ws.rs.core.Response;
  */
 public class Excecao extends Exception {
 
-    public Excecao() {
+    private Status status;
+    
+    public Excecao(Status status, String message) {
+        super(message);
     }
 
     Response getReponse() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Response.status(status).entity("").build();
     }
     
 }
