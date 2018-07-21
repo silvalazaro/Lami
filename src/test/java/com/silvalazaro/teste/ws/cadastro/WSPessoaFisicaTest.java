@@ -5,7 +5,6 @@ import com.silvalazaro.modelo.busca.Filtro;
 import com.silvalazaro.modelo.cadastro.PessoaFisica;
 import com.silvalazaro.teste.ServidorTest;
 import java.util.ArrayList;
-import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -113,12 +112,12 @@ public class WSPessoaFisicaTest {
         ArrayList<Filtro> filtros = new ArrayList();
         Filtro f1 = new Filtro("nome", "%", "Joao");
         filtros.add(f1);
-        busca1.setE(filtros);
+        // TODO
         destino = client.target(ServidorTest.PATH + "pessoaFisica/busca");
         resp = destino.request().post(Entity.entity(busca1, MediaType.APPLICATION_JSON));
         TestCase.assertEquals(200, 200);
         ArrayList<PessoaFisica> pessoas1 = resp.readEntity(ArrayList.class);
-       // TestCase.assertEquals("Joses", pessoas1.get(0).getNome());
+        // TestCase.assertEquals("Joses", pessoas1.get(0).getNome());
     }
 
     @Test

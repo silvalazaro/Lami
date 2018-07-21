@@ -11,7 +11,6 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.ws.rs.Consumes;
@@ -132,28 +131,54 @@ public abstract class Facade<T extends Modelo> {
         CriteriaBuilder cb = EM.getCriteriaBuilder();
         CriteriaQuery query = cb.createQuery(classe);
         Root root = query.from(classe);
-        ArrayList<Predicate> predicatesE = new ArrayList<>();
-        ArrayList<Predicate> predicatesOu = new ArrayList<>();
-        for (Filtro filtro : busca.getE()) {
-            predicatesE.add(filtro(filtro, cb, root));
-        }
-        for (Filtro filtro : busca.getOu()) {
-            predicatesOu.add(filtro(filtro, cb, root));
-        }
-        ArrayList<Predicate> predicates = new ArrayList<>();
+        Predicate where = filtroToPredicate(busca.getFiltro(), cb, root);
+        query.where(where);
         return Response.ok().build();
     }
 
-    private Predicate filtro(Filtro filtro, CriteriaBuilder cb, Root root) throws Excecao {
-        Predicate predicate = null;
+    private Filtro filtro(Filtro filtro) {
+        return filtro;
+    }
+
+    private Predicate filtroToPredicate(Filtro filtro, CriteriaBuilder cb, Root root) throws Excecao {
+        Predicate conjunto;
+        Predicate temp = null;
+        Predicate and = null;
+        Predicate or = null;
+        // obtem AND
+        if (filtro.getE() != null & filtro.getE().size() > 0) {
+            Predicate[] es = new Predicate[filtro.getE().size()];
+            for (int i = 0; i < filtro.getE().size(); i++) {
+                es[i] = filtroToPredicate(filtro.getE().get(i), cb, root);
+            }
+            and = cb.and(es);
+        }
+        // obtem OR
+        if (filtro.getOu() != null && filtro.getOu().size() > 0) {
+            Predicate[] os = new Predicate[filtro.getE().size()];
+            for (int i = 0; i < filtro.getOu().size(); i++) {
+                os[i] = filtroToPredicate(filtro.getE().get(i), cb, root);
+            }
+            and = cb.or(os);
+        }
         switch (filtro.getOperador()) {
             case "%":
-                predicate = cb.like(root.get(filtro.getPropriedade()), filtro.getValor());
+                temp = cb.like(root.get(filtro.getPropriedade()), filtro.getValor());
                 break;
             default:
                 throw new Excecao(Response.Status.BAD_REQUEST, "Operador condicional inválido");
         }
-        return predicate;
+        if(and != null){
+            conjunto = cb.and(temp, and);
+            if(or != null){
+                conjunto = cb.or(conjunto, or);
+            }
+        }else if(or != null){
+            conjunto = cb.or(temp, or);
+        }else{
+            conjunto = temp;
+        }
+        return conjunto;
     }
 
     @PUT

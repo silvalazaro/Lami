@@ -1,31 +1,20 @@
 package com.silvalazaro.modelo.busca;
 
-import java.util.ArrayList;
-
 /**
  * Classe de busca para consultar entidades dinamicamente
  *
  * @author Lázaro Silva
  */
 public class Busca {
-    private ArrayList<Filtro> e;
-    private ArrayList<Filtro> ou;
+    private Filtro filtro;
     private String[] atributos;
 
-    public ArrayList<Filtro> getE() {
-        return e;
+    public Filtro getFiltro() {
+        return filtro;
     }
 
-    public void setE(ArrayList<Filtro> e) {
-        this.e = e;
-    }
-
-    public ArrayList<Filtro> getOu() {
-        return ou;
-    }
-
-    public void setOu(ArrayList<Filtro> ou) {
-        this.ou = ou;
+    public void setFiltro(Filtro filtro) {
+        this.filtro = filtro;
     }
 
     public String[] getAtributos() {
