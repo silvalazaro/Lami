@@ -1,7 +1,3 @@
-# Lami - Sistema Comercial e Gerencial
+# Lami - Sistema Comercial
 
-Lami é um sistema comercial que está sendo desenvolvido para atender diversos seguimentos do mercado.
-O objetivo é que no final do projeto, o sistema permita realizar vendas, controlar estoque, gerenciar finanças e 
-trabalhar com alguns serviços bancários.
-
-Vale destacar que este projeto foi iniciado para fins didáticos.
+Lami é um sistema comercial para realizar vendas, controlar estoque e gerenciar finanças.
