@@ -10,8 +10,9 @@ import java.util.ArrayList;
 public class Filtro {
 
     private String propriedade;
-    private String valor;
     private String operador;
+    private String valor;
+    private String tipo;
     private ArrayList<Filtro> e;
     private ArrayList<Filtro> ou;
 
@@ -19,18 +20,27 @@ public class Filtro {
         
     }
     
-    public Filtro(String propriedade, String operador, String valor){
+    public Filtro(String propriedade, String operador, String valor, String tipo){
         this.propriedade = propriedade; 
         this.operador = operador;
         this.valor = valor;
+        this.tipo = tipo;
     }
-    
+
     public String getPropriedade() {
         return propriedade;
     }
 
     public void setPropriedade(String propriedade) {
         this.propriedade = propriedade;
+    }
+
+    public String getOperador() {
+        return operador;
+    }
+
+    public void setOperador(String operador) {
+        this.operador = operador;
     }
 
     public String getValor() {
@@ -41,12 +51,12 @@ public class Filtro {
         this.valor = valor;
     }
 
-    public String getOperador() {
-        return operador;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setOperador(String comparacao) {
-        this.operador = comparacao;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public ArrayList<Filtro> getE() {

@@ -1,9 +1,13 @@
 package com.silvalazaro.ws;
 
+import com.silvalazaro.Util;
 import com.silvalazaro.modelo.Modelo;
 import com.silvalazaro.modelo.busca.Busca;
 import com.silvalazaro.modelo.busca.Filtro;
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -36,7 +40,7 @@ public abstract class Facade<T extends Modelo> {
 
     protected Class<T> classe;
     private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("Lami");
-    private EntityManager EM;
+    private final EntityManager EM;
 
     public Facade(Class<T> classe) {
         this.classe = classe;
@@ -50,8 +54,6 @@ public abstract class Facade<T extends Modelo> {
      * @return Response
      */
     public T salvar(T modelo) {
-
-        EntityManager EM = EMF.createEntityManager();
         EM.getTransaction().begin();
         EM.persist(modelo);
         EM.getTransaction().commit();
@@ -131,22 +133,31 @@ public abstract class Facade<T extends Modelo> {
         CriteriaBuilder cb = EM.getCriteriaBuilder();
         CriteriaQuery query = cb.createQuery(classe);
         Root root = query.from(classe);
-        Predicate where = filtroToPredicate(busca.getFiltro(), cb, root);
-        query.where(where);
-        return Response.ok().build();
+        if (busca != null) {
+            if (busca.getFiltro() != null) {
+                Predicate where = filtroToPredicate(busca.getFiltro(), cb, root);
+                query.where(where);
+            }
+        }
+        List lista = EM.createQuery(query).getResultList();
+        return Response.ok().entity(lista).build();
     }
 
-    private Filtro filtro(Filtro filtro) {
-        return filtro;
-    }
-
+    /**
+     * Gera um Predicate a partir de um Filtro
+     * @param filtro
+     * @param cb
+     * @param root
+     * @return
+     * @throws Excecao
+     */
     private Predicate filtroToPredicate(Filtro filtro, CriteriaBuilder cb, Root root) throws Excecao {
         Predicate conjunto;
         Predicate temp = null;
         Predicate and = null;
         Predicate or = null;
         // obtem AND
-        if (filtro.getE() != null & filtro.getE().size() > 0) {
+        if (filtro.getE() != null && filtro.getE().size() > 0) {
             Predicate[] es = new Predicate[filtro.getE().size()];
             for (int i = 0; i < filtro.getE().size(); i++) {
                 es[i] = filtroToPredicate(filtro.getE().get(i), cb, root);
@@ -162,24 +173,57 @@ public abstract class Facade<T extends Modelo> {
             and = cb.or(os);
         }
         switch (filtro.getOperador()) {
+            case "eq":
+                temp = cb.equal(root.get(filtro.getPropriedade()), filtro.getValor());
+                break;
+            case "lt":
+                if (filtro.getTipo().equals("date")) {
+                    temp = cb.lessThan(root.get(filtro.getPropriedade()), Util.data(filtro.getValor()));
+                } else {
+                    temp = cb.lt(root.get(filtro.getPropriedade()), Util.parseNumber(filtro.getTipo(), filtro.getValor()));
+                }
+                break;
+            case "le":
+                if (filtro.getTipo().equals("date")) {
+                    temp = cb.lessThanOrEqualTo(root.get(filtro.getPropriedade()), Util.data(filtro.getValor()));
+                } else {
+                    temp = cb.le(root.get(filtro.getPropriedade()), Util.parseNumber(filtro.getTipo(), filtro.getValor()));
+                }
+                break;
+            case "gt":
+                if (filtro.getTipo().equals("date")) {
+                    temp = cb.greaterThan(root.get(filtro.getPropriedade()), Util.data(filtro.getValor()));
+                } else {
+                    temp = cb.gt(root.get(filtro.getPropriedade()), Util.parseNumber(filtro.getTipo(), filtro.getValor()));
+                }
+                break;
+            case "ge":
+                if (filtro.getTipo().equals("date")) {
+                    temp = cb.lessThanOrEqualTo(root.get(filtro.getPropriedade()), Util.data(filtro.getValor()));
+                } else {
+                    temp = cb.ge(root.get(filtro.getPropriedade()), Util.parseNumber(filtro.getTipo(), filtro.getValor()));
+                }
+                break;
             case "%":
                 temp = cb.like(root.get(filtro.getPropriedade()), filtro.getValor());
                 break;
             default:
                 throw new Excecao(Response.Status.BAD_REQUEST, "Operador condicional inválido");
         }
-        if(and != null){
+        if (and != null) {
             conjunto = cb.and(temp, and);
-            if(or != null){
+            if (or != null) {
                 conjunto = cb.or(conjunto, or);
             }
-        }else if(or != null){
+        } else if (or != null) {
             conjunto = cb.or(temp, or);
-        }else{
+        } else {
             conjunto = temp;
         }
         return conjunto;
     }
+
+  
 
     @PUT
     public Response atualizar() {
