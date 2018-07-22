@@ -13,9 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -31,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 public class ServidorTest {
 
     public static HttpServer servidor;
-    public static final String PATH = "http://localhost:8081/ws/";
+    public static final String link = "http://localhost:8081/ws/";
     public static Client client = ResteasyClientBuilder.newBuilder().build();
     public static WebTarget target;
 
@@ -43,7 +41,6 @@ public class ServidorTest {
         contextBuilder.getDeployment().setApplication(new WS());
         contextBuilder.setPath("ws");
         HttpContext context = contextBuilder.bind(servidor);
-        //context.getAttributes().put("some.config.info", "42");
         servidor.start();
 
     }
@@ -54,45 +51,22 @@ public class ServidorTest {
         servidor.stop(0);
     }
 
-    @Before
-    public void setUp() {
-
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Realiza uma requisição HTTP
      *
-     * @param link
+     * @param link Endereço da requisição
+     * @param metodo Tipo do metodo
      * @return
      */
-    public static Response request(String link) {
-        target = client.target(link);
-        return target.request().
-                accept(MediaType.APPLICATION_JSON).
-                get();
-    }
-
-    /**
-     * Realiza uma requisição HTTP
-     *
-     * @param link
-     * @param metodo
-     * @param entity
-     * @return
-     */
-    public static Response request(String link, HttpMetodo metodo, Entity entity) {
+    public static Response request(String link, HttpMetodo metodo) {
         Response response = null;
+        target = client.target(link);
         switch (metodo) {
-            case DELETE:
-                target = client.target(link);
-                response = target.request().delete();
+            case GET:
+                response = target.request().get();
                 break;
-            case POST:
-                response = target.request().post(entity);
+            case DELETE:
+                response = target.request().delete();
                 break;
             case OPTIONS:
                 response = target.request().options();
@@ -101,9 +75,31 @@ public class ServidorTest {
         }
         return response;
     }
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+
+    /**
+     * Realiza uma requisição HTTP - POST
+     *
+     * @param link
+     * @param entity
+     * @return
+     */
+    public static Response requestPOST(String link, Entity entity) {
+        target = client.target(link);
+        return target.request().post(entity);
+    }
+
+    /**
+     * Realiza uma requisição HTTP - PUT
+     *
+     * @param link Endereço da requisição
+     * @param entity
+     * @return
+     */
+    public static Response requestPUT(String link, Entity entity) {
+        target = client.target(link);
+        return target.request()
+                .accept(MediaType.APPLICATION_JSON)
+                .put(entity);
+    }
+
 }

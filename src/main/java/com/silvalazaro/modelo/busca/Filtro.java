@@ -16,15 +16,21 @@ public class Filtro {
     private ArrayList<Filtro> e;
     private ArrayList<Filtro> ou;
 
-    public Filtro(){
-        
+    public Filtro() {
+
     }
-    
-    public Filtro(String propriedade, String operador, String valor, String tipo){
-        this.propriedade = propriedade; 
+
+    public Filtro(String propriedade, String operador, String valor, String tipo) {
+        this.propriedade = propriedade;
         this.operador = operador;
         this.valor = valor;
         this.tipo = tipo;
+    }
+
+    public Filtro(String propriedade, String operador, String valor) {
+        this.propriedade = propriedade;
+        this.operador = operador;
+        this.valor = valor;
     }
 
     public String getPropriedade() {
@@ -74,5 +80,5 @@ public class Filtro {
     public void setOu(ArrayList<Filtro> ou) {
         this.ou = ou;
     }
-    
+
 }

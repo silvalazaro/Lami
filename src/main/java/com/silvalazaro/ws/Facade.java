@@ -4,9 +4,6 @@ import com.silvalazaro.Util;
 import com.silvalazaro.modelo.Modelo;
 import com.silvalazaro.modelo.busca.Busca;
 import com.silvalazaro.modelo.busca.Filtro;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -61,9 +58,9 @@ public abstract class Facade<T extends Modelo> {
     }
 
     /**
-     * Busca um objeto pela sua chave primaria
+     * Busca uma entidade
      *
-     * @param id Chave primária do objeto
+     * @param id Id da entidade
      * @return
      */
     @GET
@@ -78,10 +75,32 @@ public abstract class Facade<T extends Modelo> {
         return Response.ok().entity(modelo).build();
     }
 
+    /**
+     * Salva uma entidade
+     *
+     * @param modelo
+     * @return
+     */
     @POST
     public Response criar(T modelo) {
         modelo = salvar(modelo);
         return Response.status(Response.Status.CREATED).entity(modelo).build();
+    }
+
+    /**
+     * Salva uma lista de entidades
+     *
+     * @param lista
+     * @return
+     */
+    @POST
+    public Response criar(List<T> lista) {
+        EM.getTransaction().begin();
+        lista.forEach(modelo -> {
+            EM.persist(modelo);
+        });
+        EM.getTransaction().commit();
+        return Response.status(Response.Status.CREATED).entity(lista).build();
     }
 
     /**
@@ -145,6 +164,7 @@ public abstract class Facade<T extends Modelo> {
 
     /**
      * Gera um Predicate a partir de um Filtro
+     *
      * @param filtro
      * @param cb
      * @param root
@@ -223,11 +243,30 @@ public abstract class Facade<T extends Modelo> {
         return conjunto;
     }
 
-  
-
+    /**
+     * Atualiza uma entidade
+     *
+     * @param modelo
+     * @return
+     */
     @PUT
-    public Response atualizar() {
-        return Response.ok().build();
+    public Response atualizar(T modelo) {
+        EM.getTransaction().begin();
+        modelo = EM.merge(modelo);
+        EM.getTransaction().commit();
+        return Response.ok().entity(modelo).build();
+    }
+
+    /**
+     * Atualiza uma lista de entidades
+     *
+     * @param lista
+     * @return
+     */
+    @PUT
+    @Path("lista")
+    public Response atualizar(List<T> lista) {
+        return Response.ok().entity(lista).build();
     }
 
 }

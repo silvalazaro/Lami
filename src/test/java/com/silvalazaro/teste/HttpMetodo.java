@@ -6,5 +6,5 @@ package com.silvalazaro.teste;
  * @author Lázaro Silva
  */
 public enum HttpMetodo {
-    POST, PUT, DELETE, OPTIONS
+    GET, DELETE, OPTIONS
 }
