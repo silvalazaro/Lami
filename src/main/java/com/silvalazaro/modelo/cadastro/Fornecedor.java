@@ -1,12 +1,15 @@
 package com.silvalazaro.modelo.cadastro;
 
-
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
- * Representa um Fornecedor
- * 
+ * Representa um Fornecedor, aquele que fornece produtos/serviços
+ *
  * @author Lazaro Silva
  */
-public class Fornecedor extends Empresa{
-    
+@Entity
+@Table(name = "c_fornecedor")
+public class Fornecedor extends PessoaJuridica {
+
 }

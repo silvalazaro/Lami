@@ -2,38 +2,21 @@ package com.silvalazaro.modelo.cadastro;
 
 import com.silvalazaro.modelo.Modelo;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Representa o cadastro de uma Pessoa Física
+ * Representa uma Pessoa Física
  *
  * @author Lazaro Silva
  */
 @Entity
 @Table(name = "c_pessoa_fisica")
-@XmlRootElement
 public class PessoaFisica extends Modelo {
-    
-    @Id
-    private int id;
+
     private String cpf;
     private String nome;
     private String email;
     private String telefone;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
 
     public void setCpf(String cpf) {
         this.cpf = cpf;

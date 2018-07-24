@@ -1,32 +1,26 @@
 package com.silvalazaro.modelo.cadastro;
 
 import com.silvalazaro.modelo.Modelo;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- * Representa uma cidade
+ * Representa um bairro de uma cidade ou distrito
  *
- * @author Lazaro Silva
+ * @author Lázaro Silva
  */
 @Entity
-@Table(name = "c_cidade")
-public class Cidade extends Modelo {
+@Table(name = "c_bairro")
+public class Bairro extends Modelo {
 
     private String nome;
-    
-    @Column(name = "ufId", nullable = false)
+
+    @Column(name = "cidadeId", nullable = false)
     @ManyToOne(cascade = CascadeType.ALL)
-    private UF uf;
-    
-    @OneToMany(mappedBy = "cidade")
-    private List<Bairro> bairros;
-    
+    private Cidade cidade;
 
     public String getNome() {
         return nome;
@@ -36,12 +30,12 @@ public class Cidade extends Modelo {
         this.nome = nome;
     }
 
-    public UF getUf() {
-        return uf;
+    public Cidade getCidade() {
+        return cidade;
     }
 
-    public void setUf(UF uf) {
-        this.uf = uf;
+    public void setCidade(Cidade cidade) {
+        this.cidade = cidade;
     }
 
 }
