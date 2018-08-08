@@ -6,7 +6,7 @@ import App from './App.vue'
 import { library, dom } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import router from './rotas'
-import store from './store'
+import store from './store/index'
 
 Vue.config.productionTip = false
 library.add(fas)

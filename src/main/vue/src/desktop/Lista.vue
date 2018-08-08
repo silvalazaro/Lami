@@ -7,6 +7,21 @@
 </template>
 <script>
 export default { 
-    name: 'Lista'
+    name: 'Lista',
+    data(){
+        return{
+            model: 'cadastro/Usuario'
+        }
+    },
+    methods:{
+        coluna(field){
+        //   console.log(this.$store.getters[this.model+'/fields'])
+        console.log('coluna');
+        }
+      
+    },
+    created(){
+        this.colunas();
+    }
 }
 </script>

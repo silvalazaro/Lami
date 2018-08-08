@@ -16,7 +16,11 @@ const state = {
   all: []
 }
 
-const getters = {}
+const getters = {
+  fields() {
+    return fields
+  }
+}
 
 const actions = {
   getAll({ commit }) {
@@ -35,6 +39,5 @@ export default {
   state,
   getters,
   actions,
-  mutations,
-  fields
+  mutations
 }
