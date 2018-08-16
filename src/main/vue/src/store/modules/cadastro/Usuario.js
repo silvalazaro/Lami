@@ -1,17 +1,18 @@
-const fields = {
-  id: {
-    tipo: 'int'
-  },
-  email: {
-    tipo: 'string'
-  },
-  cpf: {
-    tipo: 'string'
-  },
-  ativo: {
-    tipo: 'boolean'
-  }
-}
+const fields = [
+    {
+      name: 'id',
+      type: 'int'
+    },{
+      name: 'email',
+      type: 'string'
+    }, {
+      name: 'email',
+      type: 'string'
+    }, {
+      name: 'ativo',
+      type: 'boolean'
+    }
+]
 const state = {
   all: []
 }

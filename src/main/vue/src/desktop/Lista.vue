@@ -10,18 +10,36 @@ export default {
     name: 'Lista',
     data(){
         return{
-            model: 'cadastro/Usuario'
+            model: 'Usuario'
+        }
+    },
+    computed: {
+        fields(){
+            return this.$store.getters[this.$data.model + '/fields'];
         }
     },
     methods:{
+        colunas(){
+            var ref, colunasTpl = '', colunaTpl;
+            for(ref in this.fields){
+                if(colunaTpl = this.coluna(this.fields[ref]) || null){
+                    console.log(colunaTpl);
+                    colunasTpl += colunasTpl;
+                }
+            }
+            return this.fields;
+        },
         coluna(field){
-        //   console.log(this.$store.getters[this.model+'/fields'])
-        console.log('coluna');
+            switch(field.type){
+                case 'int':
+                    break;
+                default: 
+            }
         }
       
     },
     created(){
-        this.colunas();
+   
     }
 }
 </script>
